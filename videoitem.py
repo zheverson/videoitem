@@ -1,8 +1,8 @@
 import youtube_dl
 import json
-from brain import brandslower, categories
+from videoitem.brain import brandslower, categories
 import re
-from scrapeinfo import getupc, getpinimage
+from videoitem.scrapeinfo import getupc, getpinimage
 
 
 def start(csvpath):
