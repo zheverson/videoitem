@@ -9,14 +9,15 @@ import re
 import time
 from pyvirtualdisplay import Display
 
+
 def getupc(data, sleeptime):
-    display = Display(visible=0, size=(800,600))
+    display = Display(visible=0, size=(800, 600))
     display.start()
     a = webdriver.Firefox()
+    a.get('https://www.google.com/ncr')
+    time.sleep(sleeptime)
+    search = WebDriverWait(a, 5).until(EC.element_to_be_clickable((By.XPATH, "//input[@type='text']")))
     for i in data:
-        a.get('https://www.google.com/ncr')
-        time.sleep(sleeptime)
-        search = WebDriverWait(a, 5).until(EC.element_to_be_clickable((By.XPATH, "//input[@type='text']")))
         ActionChains(a).move_to_element(search).click(search).send_keys(i['name'] + ' upc', Keys.ENTER).perform()
         time.sleep(sleeptime)
         contents = WebDriverWait(a, 5).until(EC.presence_of_all_elements_located((By.XPATH, "//div[@class='g']")))
@@ -29,13 +30,16 @@ def getupc(data, sleeptime):
             i['upc'] = upc
         except StopIteration:
             pass
+
+        search = WebDriverWait(a, 5).until(EC.element_to_be_clickable((By.XPATH, "//input[@type='text']")))
+        search.clear()
     a.close()
     display.stop()
     return data
 
 
 def getpinimage(data, sleeptime):
-    display = Display(visible=0, size=(1600,1200))
+    display = Display(visible=0, size=(1600, 1200))
     display.start()
     a = webdriver.Firefox()
     a.get('https://www.pinterest.com')
@@ -54,16 +58,18 @@ def getpinimage(data, sleeptime):
             time.sleep(sleeptime)
             try:
                 imageurl = WebDriverWait(a, 5).until(
-                    EC.presence_of_element_located((By.XPATH, "//div[@class='pinHolder']//div[@class='heightContainer']/img"))).get_attribute('src')
+                        EC.presence_of_element_located((By.XPATH,
+                                                        "//div[@class='pinHolder']//div[@class='heightContainer']/img"))).get_attribute(
+                        'src')
                 print(imageurl)
                 i['iamgeurl'] = imageurl
-                try: 
+                try:
                     print(a.find_element_by_xpath("//form//div[@class='tokenContainer']").text)
                     a.find_element_by_xpath("//form//a[@class='removeAll']").click()
                 except NoSuchElementException:
                     a.save_screenshot("home/ec2-user/china/nosearch.png")
                     pass
-                                  
+
             except TimeoutException:
                 print("no image found")
                 pass

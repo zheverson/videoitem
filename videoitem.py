@@ -11,8 +11,10 @@ def start(csvpath):
     for i in creatorurls:
         for j in i['urls']:
             downloadvideo(i['creator'], j)
-            id = j.split('/')[-1]
-            itemsinfo, videodict = getitems("/home/ec2-user/project/youtube/{}/{id}/{id}.info.json".format(i['creator'], id=id), {'url': j})
+            videoid = j.split('/')[-1]
+            itemsinfo, videodict = getitems(
+                "/home/ec2-user/project/youtube/{}/{videoid}/{videoid}.info.json".format(i['creator'], videoid=videoid),
+                {'url': j})
             items_with_upc = getupc(itemsinfo, 1.5)
             items_with_image = getpinimage(items_with_upc, 1.5)
             break
@@ -41,7 +43,7 @@ def downloadvideo(creator, url):
     ydl_opts = {
         'writeinfojson': True,
         'writeautomaticsub': True,
-        'outtmpl':'youtube/{}/{id}/{id}.%(ext)s'.format(creator, id=video_id)
+        'outtmpl': 'youtube/{}/{id}/{id}.%(ext)s'.format(creator, id=video_id)
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
